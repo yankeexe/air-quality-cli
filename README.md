@@ -2,11 +2,18 @@
 
 Get Air Quality index for your City.
 
+<p>
+<img src="https://img.shields.io/pypi/v/air-quality-cli" />
+<img src="https://img.shields.io/pypi/pyversions/air-quality-cli" />
+<img src="https://img.shields.io/pypi/l/air-quality-cli" />
+</p>
+
 ## Installation
 
 ```bash
 $ pip install air-quality-cli
 ```
+<img src="https://i.imgur.com/FsnXPXw.png" width="800" />
 
 ## Contents
 - [Air Quality Index CLI](#air-quality-index-cli)
