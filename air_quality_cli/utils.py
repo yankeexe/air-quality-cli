@@ -16,9 +16,9 @@ from rich import box
 from rich.table import Table
 from simple_term_menu import TerminalMenu
 
-from aqi_cli import console
-from aqi_cli import constants
-from aqi_cli.constants import (
+from air_quality_cli import console
+from air_quality_cli import constants
+from air_quality_cli.constants import (
     BASE_URL,
     CONFIG_FILE,
     CREDS_FILE,
@@ -109,8 +109,9 @@ def check_credential_file() -> Union[str, bool]:
 
     Return if exists.
 
-    @TODO conflicts with `check_configs()` invariant. expects files and
-     folders only but it checks env variable as well.
+    @TODO
+    Decide to keep or remove taking values from env.
+    Other checks look for `creds` file.
     """
     if (cred := os.environ.get("AQITOKEN")) is not None:
         return cred
@@ -171,7 +172,9 @@ def make_request(query: str) -> Dict[str, str]:
         )
         sys.exit()
     except requests.exceptions.ReadTimeout:
-        console.print("Network connection timeout.:construction:", style="bold red")
+        console.print(
+            "Network connection timeout.:construction:", style="bold red"
+        )
 
         sys.exit()
     except requests.exceptions.HTTPError:

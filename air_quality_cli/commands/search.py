@@ -2,7 +2,12 @@
 Search command for the CLI.
 """
 import click
-from aqi_cli.utils import create_table_payload, make_request, get_aqi_data, show_table
+from air_quality_cli.utils import (
+    create_table_payload,
+    make_request,
+    get_aqi_data,
+    show_table,
+)
 
 
 @click.command()

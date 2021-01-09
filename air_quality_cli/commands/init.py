@@ -4,9 +4,9 @@ CLI initialization command.
 import click
 from rich.prompt import Prompt
 
-from aqi_cli import console
-from aqi_cli.utils import add_credential
-from aqi_cli.constants import TOKEN_HELP_MSG
+from air_quality_cli import console
+from air_quality_cli.utils import add_credential
+from air_quality_cli.constants import TOKEN_HELP_MSG
 
 
 @click.command()

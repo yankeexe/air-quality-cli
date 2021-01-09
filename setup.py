@@ -16,18 +16,20 @@ requirements_dev = [
 ]
 
 setuptools.setup(
-    name="aqi_cli",
+    name="air-quality-cli",
     version="0.0.1",
     author="Yankee Maharjan",
     url="https://github.com/yankeexe/air-quality-cli",
     description="Get Air Quality Index from your CLI",
     license="MIT",
-    packages=setuptools.find_packages(exclude=["dist", "build", "*.egg-info", "tests"]),
+    packages=setuptools.find_packages(
+        exclude=["dist", "build", "*.egg-info", "tests"]
+    ),
     long_description=long_description,
     long_description_content_type="text/markdown",
     install_requires=requirements,
     extras_require={"dev": requirements_dev},
-    entry_points={"console_scripts": ["air = aqi_cli.app:cli"]},
+    entry_points={"console_scripts": ["air = air_quality_cli.app:cli"]},
     classifiers=[
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",

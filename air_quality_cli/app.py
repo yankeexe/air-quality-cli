@@ -3,7 +3,7 @@ Entrypoint for CLI.
 """
 import click
 
-from aqi_cli.commands import add, search, init, show
+from air_quality_cli.commands import add, search, init, show
 
 
 @click.group()

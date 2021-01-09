@@ -3,7 +3,7 @@ Show command for the CLI.
 """
 import click
 
-from aqi_cli.utils import (
+from air_quality_cli.utils import (
     concurrent_requests,
     filter_show_stations,
     get_config_stations,

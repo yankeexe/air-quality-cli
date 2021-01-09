@@ -2,7 +2,12 @@
 Add command for the CLI.
 """
 import click
-from aqi_cli.utils import make_request, get_stations, show_menu, add_to_config_file
+from air_quality_cli.utils import (
+    make_request,
+    get_stations,
+    show_menu,
+    add_to_config_file,
+)
 
 
 @click.command()
@@ -17,12 +22,6 @@ def add(location: str):
             "location1": [uid1, uid2],
             "location2" :[uid32, uid46]
         }
-
-    @TODO
-    Before adding to the file:
-    1. make sure the directory and the file to create is there.
-    2. make sure teh entry is valid and let user select which location s/he wants to set.
-    3. create a --all flag to set all the location presented in the result.
     """
 
     # Make search request to the API.
@@ -35,7 +34,9 @@ def add(location: str):
     stations = [data.station for data in stations_data]
 
     # Allow user to select station to add to the config file.
-    selected_station = show_menu(stations) if len(stations) > 1 else stations[0]
+    selected_station = (
+        show_menu(stations) if len(stations) > 1 else stations[0]
+    )
 
     # Get uid for selected station.
     station_uid = [
