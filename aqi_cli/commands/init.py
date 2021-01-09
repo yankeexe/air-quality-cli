@@ -6,6 +6,7 @@ from rich.prompt import Prompt
 
 from aqi_cli import console
 from aqi_cli.utils import add_credential
+from aqi_cli.constants import TOKEN_HELP_MSG
 
 
 @click.command()
@@ -13,8 +14,7 @@ def init():
     """
     Initialize the CLI by prompting user to enter API token.
     """
-    console.print("Get your token here: https://aqicn.org/data-platform/token/#/\n")
-    # token: str = click.prompt("Enter your API Token (hidden)", hide_input=True)
+    console.print(TOKEN_HELP_MSG)
     token = Prompt.get_input(
         console, ":key: Enter your API Token (hidden) ", password=True
     )

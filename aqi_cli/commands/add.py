@@ -1,7 +1,6 @@
 """
 Add command for the CLI.
 """
-
 import click
 from aqi_cli.utils import make_request, get_stations, show_menu, add_to_config_file
 
@@ -10,7 +9,7 @@ from aqi_cli.utils import make_request, get_stations, show_menu, add_to_config_f
 @click.argument("location")
 def add(location: str):
     """
-    Add location to the config file.
+    Add station data based on location to the config file.
 
     @TODO
     Before adding to the file:

@@ -7,7 +7,10 @@ import json
 from collections import namedtuple
 from typing import Dict, List, NamedTuple, Tuple, Union
 
+
 import requests
+from rich import box
+from rich.table import Table
 from simple_term_menu import TerminalMenu
 
 from aqi_cli import console
@@ -15,7 +18,9 @@ from aqi_cli.constants import (
     BASE_URL,
     CONFIG_FILE,
     CREDS_FILE,
-    CONFIG_DIR,
+    _CONFIG_DIR,
+    TABLE_HEADERS,
+    AQI_INFO_MAPPING,
 )
 
 
@@ -26,7 +31,7 @@ def get_stations(data: Dict) -> List[NamedTuple]:
     Stations = namedtuple("Stations", ["uid", "station"])
     help_message = "No stations found in the location.:x:"
 
-    data_node: List = data.get("data")
+    data_node: List = data["data"]
 
     if not data_node:
         console.print(help_message)
@@ -60,13 +65,14 @@ def get_aqi_data(response_data: Dict, query: str) -> List[Tuple[str, str]]:
         response_data: Response data from the API
     """
     data_node: List[Dict[str, str]] = response_data.get("data")
+    AirData = namedtuple("AirData", ["station", "aqi"])
 
     # Check for empty data_node: []
     if not data_node:
         print(f"No data found for search result {query}")
         sys.exit()
 
-    data_store = []
+    data_store: List[Tuple[str, str]] = []
 
     # Grab aqi value and station name from the response payload.
     for item in data_node:
@@ -78,18 +84,10 @@ def get_aqi_data(response_data: Dict, query: str) -> List[Tuple[str, str]]:
             continue
 
         station = item["station"]["name"]
-        data_package = (aqi, station)
+        data_package = AirData(station, aqi)
         data_store.append(data_package)
 
     return data_store
-
-
-def check_location(location: str):
-    """
-    Checks if the location added by the user is valid.
-    """
-    request_url = BASE_URL.format(query=location, API_KEY=API_KEY)
-    r = requests.get(request_url)
 
 
 def check_config_file() -> Union[List, bool]:
@@ -112,7 +110,8 @@ def check_credential_file() -> Union[str, bool]:
 
     Return if exists.
 
-    @TODO conflicts with `check_configs()` invariant. expects files and folders only but it checks env variable as well.
+    @TODO conflicts with `check_configs()` invariant. expects files and
+     folders only but it checks env variable as well.
     """
     if (cred := os.environ.get("AQITOKEN")) is not None:
         return cred
@@ -128,8 +127,8 @@ def add_credential(credential: str):
     Store creds in .aqi/creds
     """
     # Create a config directory if it doesn't exist.
-    if not os.path.exists(CONFIG_DIR):
-        os.mkdir(CONFIG_DIR)
+    if not os.path.exists(_CONFIG_DIR):
+        os.mkdir(_CONFIG_DIR)
 
     # Write credentials to the file.
     # @TODO add hashing to encrypt the keys.
@@ -184,7 +183,7 @@ def check_configs():
         - saved locations: ~/.aqi/config
 
     """
-    if not os.path.exists(CONFIG_DIR) or not check_credential_file:
+    if not os.path.exists(_CONFIG_DIR) or not check_credential_file:
         console.print(
             "You have not initialized the app, [bold green]use `air init` to add token[/bold green]"
         )
@@ -199,7 +198,7 @@ def add_to_config_file(*, station_uid: List[int], location: str, station: str):
     help_message = f"Successfully added {station}!"
 
     if not os.path.exists(CONFIG_FILE):
-        with open(CONFIG_FILE, "w+") as f:
+        with open(CONFIG_FILE, "w+"):
             pass
 
     with open(CONFIG_FILE, "r+") as file:
@@ -215,7 +214,7 @@ def add_to_config_file(*, station_uid: List[int], location: str, station: str):
 
         data_dict = json.loads(data)
 
-        if not location in data_dict:
+        if location not in data_dict:
             data_dict[location] = station_uid
         elif station_uid[0] in data_dict[location]:
             console.print(f"Station: {station} already exists.")
@@ -227,3 +226,47 @@ def add_to_config_file(*, station_uid: List[int], location: str, station: str):
         json.dump(data_dict, file)
 
     console.print(help_message)
+
+
+def show_table(data):
+    """
+    Show table to preview data.
+    """
+    table = Table(
+        *TABLE_HEADERS,
+        header_style="bold",
+        title="Air Quality Index",
+        title_style="bold black on white",
+        box=box.ROUNDED,
+        show_lines=True,
+    )
+
+    for row in data:
+        table.add_row(*row)
+
+    console.print(table)
+
+
+def info_mapper():
+    """
+    Maps the aqi value to its information.
+    """
+    data = {}
+    for range, info in AQI_INFO_MAPPING:
+        for index in range:
+            data[index] = info
+
+    return data
+
+
+def create_table_payload(aqi_data: List[NamedTuple]):
+    """
+    Create payload compatible with table.
+    """
+    data = []
+    info_mapping = info_mapper()
+    for location, aqi in aqi_data:
+        data_info = info_mapping[int(aqi)]
+        data.append((location, aqi, *data_info))
+
+    return data

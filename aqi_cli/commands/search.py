@@ -2,7 +2,8 @@
 Search command for the CLI.
 """
 import click
-from aqi_cli.utils import make_request, get_aqi_data
+from rich import table
+from aqi_cli.utils import create_table_payload, make_request, get_aqi_data, show_table
 
 
 @click.command()
@@ -15,4 +16,5 @@ def search(query: str):
     api_data = get_aqi_data(data, query)
 
     # @TODO pretty print the data with tabulate.
-    print(api_data)
+    table_info = create_table_payload(api_data)
+    show_table(table_info)
