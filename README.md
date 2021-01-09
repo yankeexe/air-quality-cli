@@ -38,7 +38,7 @@ $ air search Nepal
 ```
 
 > <details><summary><strong>Demo</strong></summary>
-> <img src = "https://i.imgur.com/71vLztO.gif" width="700" alt="demo of air quality cli search" />
+> <img src = "https://i.imgur.com/KtEEfRV.gif" width="700" alt="demo of air quality cli search" />
 
 </details>
 
