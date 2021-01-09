@@ -27,7 +27,7 @@ AQI_INFO_MAPPING = [
         Info(
             "[bold green]Good[/bold green]",
             "Air quality is considered satisfactory, and air pollution poses little or no risk",
-            None,
+            "-",
         ),
     ),
     (
@@ -41,7 +41,7 @@ AQI_INFO_MAPPING = [
     (
         range(101, 151),
         Info(
-            "[bold orange]Unhealthy for Sensitive Groups[/bold orange]",
+            "[bold magenta]Unhealthy for Sensitive Groups[/bold magenta]",
             "Members of sensitive groups may experience health effects. The general public is not likely to be affected",
             "Active children and adults, and people with respiratory disease, such as asthma, should limit prolonged outdoor exertion.",
         ),
@@ -72,6 +72,8 @@ AQI_INFO_MAPPING = [
     ),
 ]
 
+
+NO_AQI = Info("No data received from the station.", "-", "-")
 
 AQI_COLOR_MAPPING = {
     "Good": "white on green",

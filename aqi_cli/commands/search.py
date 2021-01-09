@@ -2,7 +2,6 @@
 Search command for the CLI.
 """
 import click
-from rich import table
 from aqi_cli.utils import create_table_payload, make_request, get_aqi_data, show_table
 
 
@@ -12,9 +11,14 @@ def search(query: str):
     """
     Search query for the city or nation to get aqi.
     """
+    # Make search request to the API.
     data = make_request(query)
+
+    # Get aqi value and station name from the response payload.
     api_data = get_aqi_data(data, query)
 
-    # @TODO pretty print the data with tabulate.
-    table_info = create_table_payload(api_data)
-    show_table(table_info)
+    # Create an info payload that resonates to the aqi values extracted.
+    air_info = create_table_payload(api_data)
+
+    # Show table with air quality information.
+    show_table(air_info)

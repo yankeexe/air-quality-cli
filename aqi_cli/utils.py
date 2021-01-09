@@ -4,20 +4,25 @@ Utility functions for the CLI
 import os
 import sys
 import json
+import concurrent.futures
+
 from collections import namedtuple
 from typing import Dict, List, NamedTuple, Tuple, Union
 
 
 import requests
+from requests import exceptions
 from rich import box
 from rich.table import Table
 from simple_term_menu import TerminalMenu
 
 from aqi_cli import console
+from aqi_cli import constants
 from aqi_cli.constants import (
     BASE_URL,
     CONFIG_FILE,
     CREDS_FILE,
+    NO_AQI,
     _CONFIG_DIR,
     TABLE_HEADERS,
     AQI_INFO_MAPPING,
@@ -26,7 +31,7 @@ from aqi_cli.constants import (
 
 def get_stations(data: Dict) -> List[NamedTuple]:
     """
-    Get locations from the response.
+    Get stations from the response payload.
     """
     Stations = namedtuple("Stations", ["uid", "station"])
     help_message = "No stations found in the location.:x:"
@@ -40,10 +45,6 @@ def get_stations(data: Dict) -> List[NamedTuple]:
     data_store = []
     for item in data_node:
         aqi = item["aqi"]
-        # "-" represents no data in the payload
-        # skip this value
-        if aqi == "-":
-            continue
 
         uid = item["uid"]
         station = item["station"]["name"]
@@ -62,26 +63,24 @@ def get_aqi_data(response_data: Dict, query: str) -> List[Tuple[str, str]]:
     Grabs aqi data and station name from the response payload.
 
     Args:
-        response_data: Response data from the API
+        response_data: Response data from the API.
+        query: search query from user.
     """
-    data_node: List[Dict[str, str]] = response_data.get("data")
+    data_store: List[Tuple[str, str]] = []
     AirData = namedtuple("AirData", ["station", "aqi"])
+
+    data_node: List[Dict[str, str]] = response_data.get("data")
 
     # Check for empty data_node: []
     if not data_node:
-        print(f"No data found for search result {query}")
+        console.print(
+            f"No air quality data found for search: [bold red]{query}[/bold red]"
+        )
         sys.exit()
-
-    data_store: List[Tuple[str, str]] = []
 
     # Grab aqi value and station name from the response payload.
     for item in data_node:
         aqi = item["aqi"]
-
-        # "-" represents no data in the payload
-        # skip this value
-        if aqi == "-":
-            continue
 
         station = item["station"]["name"]
         data_package = AirData(station, aqi)
@@ -130,8 +129,8 @@ def add_credential(credential: str):
     if not os.path.exists(_CONFIG_DIR):
         os.mkdir(_CONFIG_DIR)
 
-    # Write credentials to the file.
     # @TODO add hashing to encrypt the keys.
+    # Write credentials to the file.
     with open(f"{CREDS_FILE}", "w+") as cred:
         cred.write(credential.strip())
 
@@ -145,7 +144,8 @@ def make_request(query: str) -> Dict[str, str]:
     """
     Make an API request.
 
-    @TODO handle HTTP exceptions.
+    Args:
+        query: search query from user input.
     """
     token = check_credential_file()
 
@@ -155,14 +155,52 @@ def make_request(query: str) -> Dict[str, str]:
         )
         sys.exit()
 
-    r = requests.get(BASE_URL.format(query=query, API_KEY=token))
+    try:
+        response = requests.get(
+            BASE_URL.format(query=query, API_KEY=token),
+            timeout=10,
+        )
+        response.raise_for_status()
+    except requests.exceptions.ConnectionError:
+        console.print("[bold red]No connection:x:[/bold red]")
+        sys.exit()
+    except requests.exceptions.RequestException:
+        console.print(
+            "An error has occcured. Please try again later or open an issue on GitHub.:x:",
+            style="bold red",
+        )
+        sys.exit()
+    except requests.exceptions.ReadTimeout:
+        console.print("Network connection timeout.:construction:", style="bold red")
 
-    return r.json()
+        sys.exit()
+    except requests.exceptions.HTTPError:
+        error = response.json().get("message")
+        console.print(
+            f"Error: {error}.:x:",
+            style="bold red",
+        )
+
+        sys.exit()
+    except Exception:
+        error_base = response.json().get("errors")[0]
+
+        console.print(
+            f"Error: {error_base.get('message')}:x:",
+            style="bold red",
+        )
+
+        sys.exit()
+
+    return response.json()
 
 
 def show_menu(data: List[str]) -> str:
     """
     Show interactive menu and return the selected data.
+
+    Args:
+        data: items to view in the menu.
     """
     terminal_menu = TerminalMenu(data)
     menu_entry_index = terminal_menu.show()
@@ -176,12 +214,7 @@ def show_menu(data: List[str]) -> str:
 
 def check_configs():
     """
-    checks if both the config files are present.
-
-    Config files:
-        - credential: ~/.aqi/creds
-        - saved locations: ~/.aqi/config
-
+    Checks if both the config directory and credential config are present.
     """
     if not os.path.exists(_CONFIG_DIR) or not check_credential_file:
         console.print(
@@ -193,18 +226,29 @@ def check_configs():
 def add_to_config_file(*, station_uid: List[int], location: str, station: str):
     """
     Add station to config file.
+
+    Args:
+        * : all arguments after this should be keyword arguments.
+
+        station_uid: unique identifier for the station.
+        location: search query entered by user.
+        station: name of the station.
     """
-    check_configs()
     help_message = f"Successfully added {station}!"
 
+    # Check for both config folder and credentials file.
+    check_configs()
+
+    # Create stations config file if it does not exist.
     if not os.path.exists(CONFIG_FILE):
         with open(CONFIG_FILE, "w+"):
             pass
 
+    # Add search query and uid to config dictionary.
     with open(CONFIG_FILE, "r+") as file:
-
         data = file.readline()
 
+        # If config file empty.
         if not data:
             value = {location: station_uid}
             json.dump(value, file)
@@ -214,6 +258,9 @@ def add_to_config_file(*, station_uid: List[int], location: str, station: str):
 
         data_dict = json.loads(data)
 
+        # If key for search location does not exist, add station based on it.
+        # Else check if uid for the search query already exists.
+        # Else assume the key for the search query exists; append uid to its value (List).
         if location not in data_dict:
             data_dict[location] = station_uid
         elif station_uid[0] in data_dict[location]:
@@ -222,15 +269,19 @@ def add_to_config_file(*, station_uid: List[int], location: str, station: str):
         else:
             data_dict[location].append(station_uid[0])
 
+        # Rewrite the config dictionary with updated value.
         file.seek(0)
         json.dump(data_dict, file)
 
     console.print(help_message)
 
 
-def show_table(data):
+def show_table(data: List[Tuple]):
     """
     Show table to preview data.
+
+    Args:
+        data: Air Quality information.
     """
     table = Table(
         *TABLE_HEADERS,
@@ -249,7 +300,8 @@ def show_table(data):
 
 def info_mapper():
     """
-    Maps the aqi value to its information.
+    Creates a mapping expanding the range(key) used for aqi values in AQI_INFO_MAPPING.
+    Repeats the value for that range of keys.
     """
     data = {}
     for range, info in AQI_INFO_MAPPING:
@@ -259,14 +311,101 @@ def info_mapper():
     return data
 
 
-def create_table_payload(aqi_data: List[NamedTuple]):
+def create_table_payload(aqi_data: List[NamedTuple]) -> List[Tuple]:
     """
-    Create payload compatible with table.
+    Create payload compatible with table with all aqi info.
+
+    Args:
+        aqi_data: station and aqi value extracted from search query.
     """
     data = []
+
+    # Create a mapping with aqi value and their information.
     info_mapping = info_mapper()
+
+    # Grab information for the aqi value.
+    # Create a tuple with aqi_data and information based on aqi value.
     for location, aqi in aqi_data:
-        data_info = info_mapping[int(aqi)]
-        data.append((location, aqi, *data_info))
+        if aqi == "-":
+            data.append((location, aqi, *NO_AQI))
+        else:
+            data_info = info_mapping[int(aqi)]
+            data.append((location, aqi, *data_info))
 
     return data
+
+
+def get_config_stations() -> Dict[str, List[int]]:
+    """
+    Reads the config dictionary from the file.
+    """
+    help_msg = "You have not saved any stations, use [bold green]`air add <location>`[/bold green] to save a station!"
+
+    if not os.path.exists(_CONFIG_DIR):
+        console.print(
+            "App is not initialized. Use [bold green]`air init`[/bold green] to get started!"
+        )
+        sys.exit()
+
+    if not os.path.exists(CONFIG_FILE):
+        console.print(help_msg)
+        sys.exit()
+
+    with open(CONFIG_FILE, "r") as file:
+        data = json.loads(file.readline())
+
+        if not data:
+            console.print(help_msg)
+            sys.exit()
+
+        return data
+
+
+def concurrent_requests(config_data: Dict[str, List[int]]) -> List:
+    """
+    Send concurrent requests to the API.
+    """
+    aqi_response: List = []
+    queries = config_data.keys()
+
+    # Send concurrent requests to the API.
+    with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
+        submit = [
+            executor.submit(
+                make_request,
+                query,
+            )
+            for query in queries
+        ]
+
+        for future in concurrent.futures.as_completed(submit):
+            # Ignore empty values.
+            if not future.result():
+                continue
+
+            aqi_response.append(future.result()["data"])
+
+    # spinner.succeed("Parsing complete.")
+
+    return aqi_response
+
+
+def filter_show_stations(data: List[Dict[str, List[int]]], config_data):
+    """
+    Filter the stations to show based on the values in config dictionary.
+    """
+    AirData = namedtuple("AirData", ["station", "aqi"])
+    data_store = []
+
+    station_uids = list(config_data.values())
+    flatten_uids = [item for sublist in station_uids for item in sublist]
+
+    # Load = data returned from concurrent request.
+    for load in data:
+        for item in load:
+            if item["uid"] in flatten_uids:
+                aqi = item["aqi"]
+                station = item["station"]["name"]
+                data_store.append(AirData(station, aqi))
+
+    return data_store
