@@ -117,7 +117,7 @@ def check_credential_file() -> Union[str, bool]:
         return cred
     elif os.path.exists(CREDS_FILE):
         with open(CREDS_FILE) as cred:
-            return cred.readline()
+            return cred.readline().strip()
 
     return False
 

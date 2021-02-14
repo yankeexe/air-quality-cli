@@ -17,7 +17,7 @@ requirements_dev = [
 
 setuptools.setup(
     name="air-quality-cli",
-    version="0.0.2",
+    version="0.0.3",
     author="Yankee Maharjan",
     url="https://github.com/yankeexe/air-quality-cli",
     description="Get Air Quality Index from your CLI",
