@@ -162,6 +162,18 @@ def make_request(query: str) -> Dict[str, str]:
             timeout=10,
         )
         response.raise_for_status()
+
+        if response.json().get("status") == "error":
+            raise requests.exceptions.HTTPError
+
+    except requests.exceptions.HTTPError:
+        error = response.json().get("data")
+        console.print(
+            f"Error: {error}.:x:",
+            style="bold red",
+        )
+
+        sys.exit()
     except requests.exceptions.ConnectionError:
         console.print("[bold red]No connection:x:[/bold red]")
         sys.exit()
@@ -177,14 +189,7 @@ def make_request(query: str) -> Dict[str, str]:
         )
 
         sys.exit()
-    except requests.exceptions.HTTPError:
-        error = response.json().get("message")
-        console.print(
-            f"Error: {error}.:x:",
-            style="bold red",
-        )
 
-        sys.exit()
     except Exception:
         error_base = response.json().get("errors")[0]
 
