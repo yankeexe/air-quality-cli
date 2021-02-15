@@ -32,7 +32,7 @@ source venv/bin/activate
 ### Install Air Quality CLI in editable mode with development dependencies.
 
 ```bash
-pip install -e .[dev] -r requirements/dev.txt
+make setup
 ```
 
 ### Install the pre-commit hooks.
