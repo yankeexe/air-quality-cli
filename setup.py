@@ -7,14 +7,6 @@ with open("README.md", "r") as f:
 
 requirements = ["click", "rich<=7.1.0", "simple-term-menu", "requests"]
 
-# Development Requirements
-requirements_dev = [
-    "pytest<=4.*",
-    "black<=20.8b1",
-    "pre-commit",
-    "mypy",
-]
-
 setuptools.setup(
     name="air-quality-cli",
     version="0.0.3",
@@ -28,7 +20,6 @@ setuptools.setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     install_requires=requirements,
-    extras_require={"dev": requirements_dev},
     entry_points={"console_scripts": ["air = air_quality_cli.app:cli"]},
     classifiers=[
         "Programming Language :: Python :: 3.6",
