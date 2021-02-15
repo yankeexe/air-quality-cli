@@ -34,7 +34,7 @@ One time setup to initialize the CLI using API token.
 $ air init
 ```
 
-### Seach for air quality based on country or city name
+### Search for air quality based on country or city name.
 
 ```bash
 $ air search kathmandu
@@ -42,6 +42,12 @@ $ air search kathmandu
 
 ```bash
 $ air search Nepal
+```
+
+You can also use --select flag to select a particular station to display details.
+
+```bash
+$ air search --select Nepal
 ```
 
 > <details><summary><strong>Demo</strong></summary>
