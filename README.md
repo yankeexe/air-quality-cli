@@ -71,6 +71,16 @@ $ air add kathmandu
 $ air show
 ```
 
+### Remove your city from the config file.
+
+Later you can remove the stations you saved using remove command.
+
+**Remove a station**
+
+```bash
+$ air remove kathmandu
+```
+
 > <details><summary><strong>Demo</strong></summary>
 > <img src = "https://i.imgur.com/1C4tCDM.gif" width="700" alt="demo of air quality cli | add and show" />
 

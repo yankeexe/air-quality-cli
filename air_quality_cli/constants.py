@@ -15,7 +15,9 @@ _CONFIG_DIR: str = f"{_HOME_DIR}/.aqi"
 CONFIG_FILE: str = f"{_CONFIG_DIR}/{_STATIONS_FILENAME}"
 CREDS_FILE = f"{_CONFIG_DIR}/{_CREDENTIAL_FILENAME}"
 
-TOKEN_HELP_MSG = "Get your token here: https://aqicn.org/data-platform/token/#/\n"
+TOKEN_HELP_MSG = (
+    "Get your token here: https://aqicn.org/data-platform/token/#/\n"
+)
 
 TABLE_HEADERS = ["Location", "AQI", "Level", "Implications", "Cautionary"]
 

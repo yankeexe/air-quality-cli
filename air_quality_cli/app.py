@@ -3,7 +3,7 @@ Entrypoint for CLI.
 """
 import click
 
-from air_quality_cli.commands import add, search, init, show
+from air_quality_cli.commands import add, search, init, show, remove
 
 
 @click.group()
@@ -15,3 +15,4 @@ cli.add_command(add)
 cli.add_command(init)
 cli.add_command(show)
 cli.add_command(search)
+cli.add_command(remove)

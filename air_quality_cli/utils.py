@@ -284,6 +284,58 @@ def add_to_config_file(*, station_uid: List[int], location: str, station: str):
     console.print(help_message)
 
 
+def remove_from_config_file(
+    *, station_uid: List[int], location: str, station: str
+):
+    """
+    Remove station from config file.
+
+    Args:
+        * : all arguments after this should be keyword arguments.
+
+        station_uid: unique identifier for the station.
+        location: search query entered by user.
+        station: name of the station.
+    """
+    success_message = f"Successfully removed {station}!"
+    empty_message = f"Config file empty. No stations saved to remove!"
+    no_location_message = f"Location {location} isn't saved in config file."
+    no_station_message = f"Station {station} isn't saved in config file."
+
+    # Check for both config folder and credentials file.
+    check_configs()
+
+    # Remove uid from the config file.
+    with open(CONFIG_FILE, "r+") as file:
+        data = file.readline()
+
+        if not data:
+            console.print(empty_message)
+            sys.exit()
+
+        data_dict = json.loads(data)
+
+        # If location doesnt exist, display message
+        # If location exists but station doesnt, display message
+        # If location exists as well as station, then remove the uid of the station
+        if location not in data_dict:
+            console.print(no_location_message)
+            sys.exit()
+        elif station_uid[0] not in data_dict[location]:
+            console.print(station_uid[0])
+            console.print(no_station_message)
+            sys.exit()
+        else:
+            data_dict[location].remove(station_uid[0])
+
+    with open(CONFIG_FILE, "w") as file:
+        # Rewriting the config dictionary with config value
+        file.seek(0)
+        json.dump(data_dict, file)
+
+    console.print(success_message)
+
+
 def show_table(data: List[Tuple]):
     """
     Show table to preview data.
