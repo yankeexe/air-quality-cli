@@ -17,7 +17,7 @@ from air_quality_cli.utils import (
 
 @click.command()
 @click.argument("query")
-@click.option("--select", is_flag=True)
+@click.option("-s", "--select", is_flag=True)
 def search(select, query: str):
     """
     Search query for the city or nation to get aqi.
@@ -31,16 +31,16 @@ def search(select, query: str):
 
     # Show only one station's data if called with --select flag
     if select:
-        click.echo("Asked with search")
+        click.echo("Select station")
 
         # Using simple-term-menu to show the list of stations
         # Get the name of stations and their uid from the response data.
         stations_data = get_stations(data)
 
         # Filter out just the stations.
-        stations = [data.station for data in stations_data]
+        stations: List[str] = [data.station for data in stations_data]
 
-        # Allow user to select station to add to the config file.
+        # Allow user to select station to display data received from it.
         selected_station = (
             show_menu(stations) if len(stations) > 1 else stations[0]
         )
@@ -49,7 +49,7 @@ def search(select, query: str):
         single_station_list: List[Tuple[str, str]] = []
 
         for item in api_data:
-            if item[0] == selected_station:
+            if item.station == selected_station:
                 single_station_list.append(item)
 
         air_info = create_table_payload(single_station_list)

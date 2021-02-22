@@ -50,6 +50,12 @@ You can also use --select flag to select a particular station to display details
 $ air search --select Nepal
 ```
 
+Shorthand -s is also available for --select flag.
+
+```bash
+$ air search -s Nepal
+```
+
 > <details><summary><strong>Demo</strong></summary>
 > <img src = "https://i.imgur.com/KtEEfRV.gif" width="700" alt="demo of air quality cli search" />
 
