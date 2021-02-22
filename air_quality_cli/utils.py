@@ -326,7 +326,11 @@ def remove_from_config_file(
             console.print(no_station_message)
             sys.exit()
         else:
-            data_dict[location].remove(station_uid[0])
+            # If only a single station exists then remove the location from the dictionary
+            if len(data_dict[location]) == 1:
+                data_dict.pop(location, None)
+            else:
+                data_dict[location].remove(station_uid[0])
 
     with open(CONFIG_FILE, "w") as file:
         # Rewriting the config dictionary with config value

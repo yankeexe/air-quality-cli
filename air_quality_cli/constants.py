@@ -65,7 +65,7 @@ AQI_INFO_MAPPING = [
         ),
     ),
     (
-        range(301, 501),
+        range(301, 1001),
         Info(
             "[bold brown]Hazardous[/bold brown]",
             "Health alert: everyone may experience more serious health effects",
