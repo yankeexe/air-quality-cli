@@ -266,16 +266,24 @@ def add_to_config_file(*, station_uid: List[int], location: str, station: str):
 
         data_dict = json.loads(data)
 
+        # First create an list of object to be assigned to the location.
+        station_dict = [
+            {
+                "name": station,
+                "uid": station_uid[0],
+            },
+        ]
+
         # If key for search location does not exist, add station based on it.
         # Else check if uid for the search query already exists.
         # Else assume the key for the search query exists; append uid to its value (List).
         if location not in data_dict:
-            data_dict[location] = station_uid
+            data_dict[location] = station_dict
         elif station_uid[0] in data_dict[location]:
             console.print(f"Station: {station} already exists.")
             sys.exit()
         else:
-            data_dict[location].append(station_uid[0])
+            data_dict[location].append(station_dict[0])
 
         # Rewrite the config dictionary with updated value.
         file.seek(0)
@@ -321,16 +329,23 @@ def remove_from_config_file(
         if location not in data_dict:
             console.print(no_location_message)
             sys.exit()
-        elif station_uid[0] not in data_dict[location]:
-            console.print(station_uid[0])
-            console.print(no_station_message)
-            sys.exit()
         else:
-            # If only a single station exists then remove the location from the dictionary
-            if len(data_dict[location]) == 1:
-                data_dict.pop(location, None)
+            data_dict_location_uids = [
+                item["uid"] for item in data_dict[location]
+            ]
+
+            if station_uid[0] not in data_dict_location_uids:
+                console.print(station_uid[0])
+                console.print(no_station_message)
+                sys.exit()
             else:
-                data_dict[location].remove(station_uid[0])
+                # If only a single station exists then remove the location from the dictionary
+                if len(data_dict_location_uids) == 1:
+                    data_dict.pop(location, None)
+                else:
+                    for station_obj in data_dict[location]:
+                        if station_obj["uid"] == station_uid[0]:
+                            data_dict[location].remove(station_obj)
 
     with open(CONFIG_FILE, "w") as file:
         # Rewriting the config dictionary with config value
@@ -399,7 +414,7 @@ def create_table_payload(aqi_data: List[NamedTuple]) -> List[Tuple]:
     return data
 
 
-def get_config_stations() -> Dict[str, List[int]]:
+def get_config_stations() -> Dict[str, List[Dict[str, Union[str, int]]]]:
     """
     Reads the config dictionary from the file.
     """
@@ -425,7 +440,9 @@ def get_config_stations() -> Dict[str, List[int]]:
         return data
 
 
-def concurrent_requests(config_data: Dict[str, List[int]]) -> List:
+def concurrent_requests(
+    config_data: Dict[str, List[Dict[str, Union[str, int]]]]
+) -> List:
     """
     Send concurrent requests to the API.
     """
@@ -461,8 +478,10 @@ def filter_show_stations(data: List[Dict[str, List[int]]], config_data):
     AirData = namedtuple("AirData", ["station", "aqi"])
     data_store = []
 
-    station_uids = list(config_data.values())
-    flatten_uids = [item for sublist in station_uids for item in sublist]
+    station_dict = list(config_data.values())
+    flatten_uids = [
+        item["uid"] for sublist in station_dict for item in sublist
+    ]
 
     # Load = data returned from concurrent request.
     for load in data:

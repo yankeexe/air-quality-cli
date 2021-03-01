@@ -16,11 +16,17 @@ def add(location: str):
     """
     Add station data based on location to the config file.
 
-    Stores the data as Dict[str, List[int, int]]
+    Stores the data as Dict[str, List[int, Dict[str, Union[str, int]]]]
 
         {
-            "location1": [uid1, uid2],
-            "location2" :[uid32, uid46]
+            "location1": [
+                { "station_name1" : "uid1", "station_name2" : "uid2", },
+                { "station_name3" : "uid3", "station_name4" : "uid4", },
+            ],
+            "location2": [
+                { "station_name5" : "uid5", "station_name6" : "uid6", },
+                { "station_name7" : "uid7", "station_name8" : "uid8", },
+            ],
         }
     """
 

@@ -4,7 +4,10 @@ Remove command for the CLI
 import json
 import click
 
+from typing import Dict, List, Union
+
 from air_quality_cli.utils import (
+    get_config_stations,
     make_request,
     get_stations,
     show_menu,
@@ -23,11 +26,10 @@ def remove(location: str):
     Remove saved stations from a location
     """
 
-    # Make search request to the API
-    data = make_request(location)
-
-    # Get the name of the stations and their uids
-    stations_data = get_stations(data)
+    # Get the stations data saved in config file
+    stations_data: Dict[
+        str, List[Dict[str, Union[str, int]]]
+    ] = get_config_stations()
 
     # Boolean to find out whether location is saved.
     is_saved: bool = False
@@ -44,11 +46,7 @@ def remove(location: str):
     # If the location is found, show the list of stations to be removed.
     if is_saved:
 
-        stations = [
-            item.station
-            for item in stations_data
-            if item.uid in data_dict[location]
-        ]
+        stations = [item["name"] for item in stations_data[location]]
 
         # Allow the user to select the station to be removed from the config file.
         selected_station = (
@@ -57,9 +55,9 @@ def remove(location: str):
 
         # Get uid for selected station.
         station_uid = [
-            data.uid
-            for data in stations_data
-            if data.station == selected_station
+            item["uid"]
+            for item in stations_data[location]
+            if item["name"] == selected_station
         ]
 
         # Remove the selected item from the config file
