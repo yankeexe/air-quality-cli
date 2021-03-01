@@ -8,8 +8,6 @@ from typing import Dict, List, Union
 
 from air_quality_cli.utils import (
     get_config_stations,
-    make_request,
-    get_stations,
     show_menu,
     remove_from_config_file,
 )

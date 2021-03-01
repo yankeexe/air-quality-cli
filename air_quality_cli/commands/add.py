@@ -20,12 +20,12 @@ def add(location: str):
 
         {
             "location1": [
-                { "station_name1" : "uid1", "station_name2" : "uid2", },
-                { "station_name3" : "uid3", "station_name4" : "uid4", },
+                { "name" : "station_name1", "uid" : "uid01", },
+                { "name" : "station_name2", "uid" : "uid02", },
             ],
             "location2": [
-                { "station_name5" : "uid5", "station_name6" : "uid6", },
-                { "station_name7" : "uid7", "station_name8" : "uid8", },
+                { "name" : "station_name3", "uid" : "uid03", },
+                { "name" : "station_name4", "uid" : "uid04", },
             ],
         }
     """
