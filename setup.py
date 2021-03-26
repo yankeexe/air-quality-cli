@@ -9,7 +9,7 @@ requirements = ["click", "rich<=7.1.0", "simple-term-menu", "requests"]
 
 setuptools.setup(
     name="air-quality-cli",
-    version="0.0.3",
+    version="0.0.4",
     author="Yankee Maharjan",
     url="https://github.com/yankeexe/air-quality-cli",
     description="Get Air Quality Index from your CLI",

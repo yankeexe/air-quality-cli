@@ -15,7 +15,9 @@ _CONFIG_DIR: str = f"{_HOME_DIR}/.aqi"
 CONFIG_FILE: str = f"{_CONFIG_DIR}/{_STATIONS_FILENAME}"
 CREDS_FILE = f"{_CONFIG_DIR}/{_CREDENTIAL_FILENAME}"
 
-TOKEN_HELP_MSG = "Get your token here: https://aqicn.org/data-platform/token/#/\n"
+TOKEN_HELP_MSG = (
+    "Get your token here: https://aqicn.org/data-platform/token/#/\n"
+)
 
 TABLE_HEADERS = ["Location", "AQI", "Level", "Implications", "Cautionary"]
 
@@ -49,7 +51,7 @@ AQI_INFO_MAPPING = [
     (
         range(151, 201),
         Info(
-            "[bold red]Unhealthy[/bold red]",
+            "[bold yellow]Unhealthy[/bold yellow]",
             "Everyone may begin to experience health effects; members of sensitive groups may experience more serious health effects",
             "Active children and adults, and people with respiratory disease, such as asthma, should avoid prolonged outdoor exertion; everyone else, especially children, should limit prolonged outdoor exertion",
         ),
@@ -65,7 +67,7 @@ AQI_INFO_MAPPING = [
     (
         range(301, 501),
         Info(
-            "[bold brown]Hazardous[/bold brown]",
+            "[bold red]Hazardous[/bold red]",
             "Health alert: everyone may experience more serious health effects",
             "Everyone should avoid all outdoor exertion",
         ),
