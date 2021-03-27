@@ -5,19 +5,14 @@ import os
 import sys
 import json
 import concurrent.futures
-
-from collections import namedtuple
 from typing import Dict, List, NamedTuple, Tuple, Union
 
-
 import requests
-from requests import exceptions
 from rich import box
 from rich.table import Table
 from simple_term_menu import TerminalMenu
 
 from air_quality_cli import console
-from air_quality_cli import constants
 from air_quality_cli.constants import (
     BASE_URL,
     CONFIG_FILE,
@@ -26,6 +21,8 @@ from air_quality_cli.constants import (
     _CONFIG_DIR,
     TABLE_HEADERS,
     AQI_INFO_MAPPING,
+    AirData,
+    Stations,
 )
 
 
@@ -33,7 +30,6 @@ def get_stations(data: Dict) -> List[NamedTuple]:
     """
     Get stations from the response payload.
     """
-    Stations = namedtuple("Stations", ["uid", "station"])
     help_message = "No stations found in the location.:x:"
 
     data_node: List = data["data"]
@@ -67,7 +63,6 @@ def get_aqi_data(response_data: Dict, query: str) -> List[Tuple[str, str]]:
         query: search query from user.
     """
     data_store: List[Tuple[str, str]] = []
-    AirData = namedtuple("AirData", ["station", "aqi"])
 
     data_node: List[Dict[str, str]] = response_data.get("data")
 
@@ -402,7 +397,6 @@ def filter_show_stations(data: List[Dict[str, List[int]]], config_data):
     """
     Filter the stations to show based on the values in config dictionary.
     """
-    AirData = namedtuple("AirData", ["station", "aqi"])
     data_store = []
 
     station_uids = list(config_data.values())
