@@ -34,7 +34,7 @@ One time setup to initialize the CLI using API token.
 $ air init
 ```
 
-### Seach for air quality based on country or city name
+### Search for air quality based on country or city name.
 
 ```bash
 $ air search kathmandu
@@ -42,6 +42,18 @@ $ air search kathmandu
 
 ```bash
 $ air search Nepal
+```
+
+You can also use --select flag to select a particular station to display details.
+
+```bash
+$ air search --select Nepal
+```
+
+Shorthand -s is also available for --select flag.
+
+```bash
+$ air search -s Nepal
 ```
 
 > <details><summary><strong>Demo</strong></summary>
@@ -63,6 +75,16 @@ $ air add kathmandu
 
 ```bash
 $ air show
+```
+
+### Remove your city from the config file.
+
+Later you can remove the stations you saved using remove command.
+
+**Remove a station**
+
+```bash
+$ air remove kathmandu
 ```
 
 > <details><summary><strong>Demo</strong></summary>
