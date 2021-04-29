@@ -9,15 +9,13 @@ import concurrent.futures
 from collections import namedtuple
 from typing import Dict, List, NamedTuple, Tuple, Union
 
-
 import requests
-from requests import exceptions
 from rich import box
 from rich.table import Table
+from requests import exceptions
 from simple_term_menu import TerminalMenu
 
 from air_quality_cli import console
-from air_quality_cli import constants
 from air_quality_cli.constants import (
     BASE_URL,
     CONFIG_FILE,
@@ -44,8 +42,6 @@ def get_stations(data: Dict) -> List[NamedTuple]:
 
     data_store = []
     for item in data_node:
-        aqi = item["aqi"]
-
         uid = item["uid"]
         station = item["station"]["name"]
         data_store.append(Stations(uid, station))
@@ -89,7 +85,7 @@ def get_aqi_data(response_data: Dict, query: str) -> List[Tuple[str, str]]:
     return data_store
 
 
-def check_config_file() -> Union[List, bool]:
+def check_config_file() -> Union[str, bool]:
     """
     Check for API keys in config file.
     Return if exists.
@@ -104,7 +100,7 @@ def check_config_file() -> Union[List, bool]:
 
 def check_credential_file() -> Union[str, bool]:
     """
-    Check for API TOKEN is in Envrionment variable
+    Check for API TOKEN is in Environment variable
     else in config file.
 
     Return if exists.
@@ -113,7 +109,8 @@ def check_credential_file() -> Union[str, bool]:
     Decide to keep or remove taking values from env.
     Other checks look for `creds` file.
     """
-    if (cred := os.environ.get("AQITOKEN")) is not None:
+    cred = os.environ.get("AQITOKEN")
+    if cred is not None:
         return cred
     elif os.path.exists(CREDS_FILE):
         with open(CREDS_FILE) as cred:
@@ -312,8 +309,8 @@ def info_mapper():
     Repeats the value for that range of keys.
     """
     data = {}
-    for range, info in AQI_INFO_MAPPING:
-        for index in range:
+    for air_quality_range, info in AQI_INFO_MAPPING:
+        for index in air_quality_range:
             data[index] = info
 
     return data

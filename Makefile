@@ -3,12 +3,12 @@ CWD := $(PWD)
 TMP_PATH := $(CWD)/.tmp
 VENV_PATH := $(CWD)/venv
 
-.DEFAULT_GOAL := help 
+.DEFAULT_GOAL := help
 
 
 .PHONY: test clean
 
-clean: # Clean cache 
+clean: # Clean cache
 	@rm -rf $(TMP_PATH) __pycache__ .pytest_cache
 	@find . -name '*.pyc' -delete
 	@find . -name '__pycache__' -delete
