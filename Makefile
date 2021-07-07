@@ -1,32 +1,31 @@
 SHELL :=/bin/bash
-CWD := $(PWD)
-TMP_PATH := $(CWD)/.tmp
-VENV_PATH := $(CWD)/venv
+.DEFAULT_GOAL=help
+LDFLAGS := "-s -w"
 
-.DEFAULT_GOAL := help 
+test: # Run all tests
+	@go test ./... -v
 
+cover: # Launch a browser tab with coverage report
+	@go test -v -coverprofile=c.out ./...
+	@go tool cover -html=c.out
+.PHONY: cover
 
-.PHONY: test clean
+clean: # Delete temp files
+	@rm -f c.out || true
+	@echo Temp files cleaned!
 
-clean: # Clean cache 
-	@rm -rf $(TMP_PATH) __pycache__ .pytest_cache
-	@find . -name '*.pyc' -delete
-	@find . -name '__pycache__' -delete
+setup: # go mod tidy
+	@go mod tidy
+.PHONY: setup
 
-test: # Run pytest
-	@pytest -vvv
+dist: # Create distribution binaries
+	mkdir -p bin
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags $(LDFLAGS) -a -installsuffix cgo -o bin/air
+	CGO_ENABLED=0 GOOS=darwin go build -ldflags $(LDFLAGS) -a -installsuffix cgo -o bin/air-darwin
+	CGO_ENABLED=0 GOOS=linux GOARCH=arm GOARM=6 go build -ldflags $(LDFLAGS) -a -installsuffix cgo -o bin/air-armhf
+	CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -ldflags $(LDFLAGS) -a -installsuffix cgo -o bin/air-arm64
+	CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -ldflags $(LDFLAGS) -a -installsuffix cgo -o bin/air.exe
 
-venv: # Create virtualenv
-	@python3 -m venv venv
-
-format: # Format using black
-	@black .
-
-check: # Check formattable using black
-	@black --check --diff .
-
-setup: # Setup dev environment
-	@pip install -e .[dev] -r requirements/dev.txt
 
 help: # Show this help
 	@egrep -h '\s#\s' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?# "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'

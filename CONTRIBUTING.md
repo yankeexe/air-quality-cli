@@ -6,11 +6,9 @@ Thank you for considering contributing to Air Quality CLI!
 
 Include the following in your patch:
 
-- Use [Black](https://github.com/psf/black) to format your code. This and other tools will run automatically if you install [pre-commit](https://github.com/pre-commit/pre-commit-hooks) using the instructions below.
-
+- use `go fmt` to format your code to remove/reduce any inconsistencies.
 - Update README.md about new changes if it affects the sub-commands.
 
-- Use [mypy](https://github.com/python/mypy) to check static typing on the codebase.
 
 ### First time setup
 
@@ -20,25 +18,10 @@ Include the following in your patch:
 git clone https://github.com/yankeexe/air-quality-cli
 ```
 
-- Create a virtualenv
+- Install modules
 
 ```bash
-python3 -m venv venv
-
-# activate virtualenv
-source venv/bin/activate
-```
-
-### Install Air Quality CLI in editable mode with development dependencies.
-
-```bash
-make setup
-```
-
-### Install the pre-commit hooks.
-
-```bash
-pre-commit install
+go mod tidy
 ```
 
 Start coding 🚀
