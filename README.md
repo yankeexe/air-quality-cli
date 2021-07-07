@@ -2,17 +2,10 @@
 
 Get Air Quality index for your City.
 
-<p>
-<img src="https://img.shields.io/pypi/v/air-quality-cli" />
-<img src="https://img.shields.io/pypi/pyversions/air-quality-cli" />
-<img src="https://img.shields.io/pypi/l/air-quality-cli" />
-</p>
-
 ## Installation
 
-```bash
-$ pip install air-quality-cli
-```
+Download the latest binary for your platform from the [Release page](https://github.com/yankeexe/air-quality-cli/releases).
+
 <img src="https://i.imgur.com/FsnXPXw.png" width="800" />
 
 ## Contents
@@ -23,6 +16,7 @@ $ pip install air-quality-cli
     - [Initialization](#initialization)
     - [Seach for air quality based on country or city name](#seach-for-air-quality-based-on-country-or-city-name)
     - [Save your city to config for quick view.](#save-your-city-to-config-for-quick-view)
+    - [Remove saved city from your config](#remove-saved-city-from-your-config)
   - [Contributing](#contributing)
 ## Usage
 ### Initialization
@@ -38,6 +32,11 @@ $ air init
 
 ```bash
 $ air search kathmandu
+
+# by default, stations whose data is not avaiable is hidden.
+# use --all to show stations even if there's no data.
+
+$ air search kathmandu --all
 ```
 
 ```bash
@@ -59,14 +58,38 @@ You can save stations from a number of locations to quickly view air quality the
 $ air add kathmandu
 ```
 
+> <details><summary><strong>Demo</strong></summary>
+> <img src = "https://i.imgur.com/DmpFBEH.gif" width="700" alt="demo of air quality cli add stations" />
+
+</details>
+
 **Show air quality from all your saved locations**
 
 ```bash
 $ air show
+
+# by default, stations whose data is not avaiable is hidden.
+# use --all to show stations even if there's no data.
+
+$ air show --all
 ```
 
 > <details><summary><strong>Demo</strong></summary>
-> <img src = "https://i.imgur.com/1C4tCDM.gif" width="700" alt="demo of air quality cli | add and show" />
+> <img src = "https://i.imgur.com/YLtIWIz.gif" width="700" alt="demo of air quality cli show" />
+
+
+### Remove saved city from your config
+
+You can remove any saved stations/city from your config if you no longer need its information.
+
+
+```bash
+$ air remove
+```
+
+> <details><summary><strong>Demo</strong></summary>
+> <img src = "https://i.imgur.com/DXZI4sG.gif" width="700" alt="demo of air quality cli remove" />
+
 
 ## Contributing
 
