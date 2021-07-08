@@ -1,6 +1,10 @@
 # Air Quality Index CLI
+[![Go Report Card](https://goreportcard.com/badge/github.com/yankeexe/air-quality-cli)](https://goreportcard.com/report/github.com/yankeexe/air-quality-cli)
+[![License: Apache-2.0](https://img.shields.io/badge/License-Apache-yellow.svg)](https://opensource.org/licenses/Apache-2.0)
+![Latest GitHub release](https://img.shields.io/github/release/yankeexe/air-quality-cli)
 
 Get Air Quality index for your City.
+
 
 ## Installation
 
