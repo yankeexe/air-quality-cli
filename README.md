@@ -4,7 +4,7 @@ Get Air Quality index for your City.
 
 ## Installation
 
-Download the latest binary for your platform from the [Release page](https://github.com/yankeexe/air-quality-cli/releases).
+Download the latest binary for your platform from the [Release page](https://github.com/yankeexe/air-quality-cli/releases/latest).
 
 <img src="https://i.imgur.com/FsnXPXw.png" width="800" />
 
