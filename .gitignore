@@ -19,3 +19,4 @@ bin/
 ### Go Patch ###
 /vendor/
 /Godeps/
+dist/

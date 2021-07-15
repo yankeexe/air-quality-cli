@@ -1,6 +1,10 @@
 SHELL :=/bin/bash
+
+Version := $(shell git tag --sort=committerdate | tail -1)
+LDFLAGS := "-s -w -X github.com/yankeexe/air-quality-cli/cmd.Version=$(Version)"
+
 .DEFAULT_GOAL=help
-LDFLAGS := "-s -w"
+
 
 test: # Run all tests
 	@go test ./... -v
