@@ -5,6 +5,7 @@ before:
 builds:
   - ldflags:
       - -s -w -X "github.com/yankeexe/air-quality-cli/cmd.Version={{.Tag}}"
+    binary: air
     env:
       - CGO_ENABLED=0
     goos:
