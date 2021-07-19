@@ -15,9 +15,11 @@ limitations under the License.
 package cmd
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/gookit/color"
+	fuzzyfinder "github.com/ktr0731/go-fuzzyfinder"
 	"github.com/olekukonko/tablewriter"
 	"github.com/spf13/cobra"
 	"github.com/yankeexe/air-quality-cli/pkg/aqi"
@@ -59,14 +61,58 @@ var searchCmd = &cobra.Command{
 		}
 
 		all, _ := cmd.Flags().GetBool("all")
+		search, _ := cmd.Flags().GetBool("fuzzy")
+
 		table := tablewriter.NewWriter(os.Stdout)
 
-		utils.CreateTable(*res, table, all)
+		if search {
+			selectedStations, err := fuzzySearchList(res.Data)
+			if err != nil {
+				color.Warn.Println(err)
+				os.Exit(0)
+			}
+			utils.CreateTable(aqi.Response{Data: *selectedStations}, table, all)
+		} else {
+			utils.CreateTable(*res, table, all)
+		}
+
 		table.Render()
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(searchCmd)
-	searchCmd.Flags().Bool("all", false, "Show stations even with no station data")
+	searchCmd.Flags().BoolP("all", "a", false, "air search -a")
+	searchCmd.Flags().BoolP("fuzzy", "f", false, "air search -s")
+}
+
+func fuzzySearchList(response []aqi.Weather) (*[]aqi.Weather, error) {
+	index, err := fuzzyfinder.FindMulti(response, func(i int) string {
+		return response[i].Station.Name
+	},
+		fuzzyfinder.WithPreviewWindow(func(i, width, height int) string {
+			if i == -1 {
+				return ""
+			}
+
+			return fmt.Sprintf(`%s
+
+			Station Name: %s
+			Index: %s`,
+				"Use <TAB> to select multiple stations",
+				response[i].Station.Name,
+				response[i].AirQuality)
+		}))
+
+	if err != nil {
+		return nil, err
+	}
+
+	selectedItems := []aqi.Weather{}
+
+	for _, idx := range index {
+		selectedItems = append(selectedItems, response[idx])
+	}
+
+	return &selectedItems, nil
 }

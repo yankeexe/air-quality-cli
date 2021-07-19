@@ -2,6 +2,7 @@ package aqi
 
 import (
 	"encoding/json"
+	"errors"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -29,7 +30,7 @@ func (req *Request) Fetch(query string) (*Response, error) {
 
 	resp, err := http.Get("https://api.waqi.info/search/?" + params.Encode())
 	if err != nil {
-		return nil, err
+		return nil, errors.New("failed to establish a connection")
 	}
 
 	defer resp.Body.Close()
