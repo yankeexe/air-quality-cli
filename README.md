@@ -20,7 +20,7 @@ curl -f https://raw.githubusercontent.com/yankeexe/air-quality-cli/master/instal
   - [Contents](#contents)
   - [Usage](#usage)
     - [Initialization](#initialization)
-    - [Seach for air quality based on country or city name](#seach-for-air-quality-based-on-country-or-city-name)
+    - [Search for air quality based on country or city name](#search-for-air-quality-based-on-country-or-city-name)
     - [Save your city to config for quick view.](#save-your-city-to-config-for-quick-view)
     - [Remove saved city from your config](#remove-saved-city-from-your-config)
   - [Contributing](#contributing)
@@ -34,13 +34,13 @@ One time setup to initialize the CLI using API token.
 $ air init
 ```
 
-### Seach for air quality based on country or city name
+### Search for air quality based on country or city name
 
 ```bash
 $ air search kathmandu
 
 # by default, stations whose data is not avaiable is hidden.
-# use --all to show stations even if there's no data.
+# use --all or -a to show stations even if there's no data.
 
 $ air search kathmandu --all
 ```
@@ -51,6 +51,25 @@ $ air search Nepal
 
 > <details><summary><strong>Demo</strong></summary>
 > <img src = "https://i.imgur.com/KtEEfRV.gif" width="700" alt="demo of air quality cli search" />
+
+</details>
+
+**Fuzzy search the stations from your query.**
+
+Alternative to viewing all the stations as table, you can also fuzzy search the stations returned from your query.
+
+Use `-f` or `--fuzzy` flag to initiage fuzzy searching.
+
+```bash
+$ air search kathmandu -f
+
+# by default, stations whose data is not avaiable is hidden.
+# use --all or -a to show stations even if there's no data.
+$ air search kathmandu -fa
+```
+
+> <details><summary><strong>Demo</strong></summary>
+> <img src = "https://i.imgur.com/9M5akjp.gif" width="700" alt="demo of air quality cli search" />
 
 </details>
 
@@ -75,7 +94,7 @@ $ air add kathmandu
 $ air show
 
 # by default, stations whose data is not avaiable is hidden.
-# use --all to show stations even if there's no data.
+# use --all or -a to show stations even if there's no data.
 
 $ air show --all
 ```
