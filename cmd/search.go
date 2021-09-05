@@ -17,6 +17,8 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"os/signal"
+	"syscall"
 
 	"github.com/gookit/color"
 	fuzzyfinder "github.com/ktr0731/go-fuzzyfinder"
@@ -47,6 +49,15 @@ var searchCmd = &cobra.Command{
 			color.Danger.Println(err)
 			os.Exit(1)
 		}
+
+		killSignal := make(chan os.Signal, 1)
+		signal.Notify(killSignal, os.Interrupt, syscall.SIGTERM)
+
+		go func() {
+			<-killSignal
+			fmt.Println("Search stopped")
+			os.Exit(130)
+		}()
 
 		searchQuery := args[0]
 		res, err := aqi.HTTPClient.Fetch(searchQuery)
