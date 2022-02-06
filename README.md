@@ -12,6 +12,36 @@ Get Air Quality index for your City.
 curl -f https://raw.githubusercontent.com/yankeexe/air-quality-cli/master/install.sh | sudo sh
 ```
 
+### Manual Installation
+Download the [latest release](https://github.com/yankeexe/air-quality-cli/releases).
+
+
+### Verification of artifacts
+
+All artifacts are checksummed and the checksum file is signed with [cosign](https://github.com/sigstore/cosign#installation) (keyless).
+
+* Download checksum and sig file for verification.
+
+  ```bash
+  wget https://github.com/yankeexe/air-quality-cli/releases/download/v0.0.6/checksums.txt
+
+  wget https://github.com/yankeexe/air-quality-cli/releases/download/v0.0.6/checksums.txt.sig
+  ```
+* Verify the signature
+
+  ```bash
+  COSIGN_EXPERIMENTAL=1 cosign verify-blob --signature checksums.txt.sig checksums.txt
+  ```
+  If the signature is valid, verify the SHA256 match with the downloaded binary.
+
+* Verify Downloaded Binary
+
+  Store downloaded binary on the same dir as `checksums.txt`
+  ```bash
+  sha256sum --ignore-missing -c checksums.txt
+  ```
+
+
 <img src="https://i.imgur.com/FsnXPXw.png" width="800" />
 
 ## Contents

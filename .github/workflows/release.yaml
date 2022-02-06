@@ -11,6 +11,10 @@ permissions:
 jobs:
   goreleaser:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+      packages: write
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -19,7 +23,9 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v2
         with:
-          go-version: 1.16
+          go-version: 1.17
+
+      - uses: sigstore/cosign-installer@v2.0.0
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v2
         with:
