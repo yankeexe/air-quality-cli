@@ -22,6 +22,9 @@ setup: # go mod tidy
 	@go mod tidy
 .PHONY: setup
 
+docker-build:
+	@docker build -t air-docker .
+
 build-amd64:
 	@echo "Compiling amd64 build"
 	@CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags $(LDFLAGS) -a -installsuffix cgo -o bin/air-amd64

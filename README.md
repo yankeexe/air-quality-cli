@@ -5,6 +5,20 @@
 
 Get Air Quality index for your City.
 
+<img src="https://i.imgur.com/FsnXPXw.png" width="800" />
+
+## Contents
+- [Air Quality Index CLI](#air-quality-index-cli)
+  - [Installation](#installation)
+    - [Manual Installation](#manual-installation)
+    - [Using Docker :whale:](#using-docker-whale)
+    - [Verification of artifacts](#verification-of-artifacts)
+  - [Usage](#usage)
+    - [Initialization](#initialization)
+    - [Search for air quality based on country or city name](#search-for-air-quality-based-on-country-or-city-name)
+    - [Save your city to config for quick view.](#save-your-city-to-config-for-quick-view)
+    - [Remove saved city from your config](#remove-saved-city-from-your-config)
+  - [Contributing](#contributing)
 
 ## Installation
 
@@ -15,6 +29,32 @@ curl -f https://raw.githubusercontent.com/yankeexe/air-quality-cli/master/instal
 ### Manual Installation
 Download the [latest release](https://github.com/yankeexe/air-quality-cli/releases).
 
+### Using Docker :whale:
+
+```bash
+docker pull ghcr.io/yankeexe/air-quality-cli:latest
+```
+
+Verify signature of the image: requires [cosign](https://docs.sigstore.dev/cosign/installation/).
+
+```bash
+COSIGN_EXPERIMENTAL=true cosign verify ghcr.io/yankeexe/air-quality-cli:latest
+```
+
+```bash
+$ docker run --rm -it -v ${HOME}/.air:/home/cli/.air ghcr.io/yankeexe/air-quality-cli:latest search Nepal
+```
+For convenience you can add alias of the command to your shell config:
+```bash
+$ echo "alias air='docker run --rm -it -v ${HOME}/.air:/home/cli/.air ghcr.io/yankeexe/air-quality-cli:latest'" >> ~/.bashrc
+$ source ~/.bashrc
+
+$ echo "alias air='docker run --rm -it -v ${HOME}/.air:/home/cli/.air ghcr.io/yankeexe/air-quality-cli:latest'">> ~/.zshrc
+$ source ~/.zshrc
+
+# Use alias to invoke timezones-cli
+$ air search Singapore
+```
 
 ### Verification of artifacts
 
@@ -23,9 +63,9 @@ All artifacts are checksummed and the checksum file is signed with [cosign](http
 * Download checksum and sig file for verification.
 
   ```bash
-  wget https://github.com/yankeexe/air-quality-cli/releases/download/v0.0.6/checksums.txt
+  wget https://github.com/yankeexe/air-quality-cli/releases/download/v0.0.7/checksums.txt
 
-  wget https://github.com/yankeexe/air-quality-cli/releases/download/v0.0.6/checksums.txt.sig
+  wget https://github.com/yankeexe/air-quality-cli/releases/download/v0.0.7/checksums.txt.sig
   ```
 * Verify the signature
 
@@ -41,19 +81,6 @@ All artifacts are checksummed and the checksum file is signed with [cosign](http
   sha256sum --ignore-missing -c checksums.txt
   ```
 
-
-<img src="https://i.imgur.com/FsnXPXw.png" width="800" />
-
-## Contents
-- [Air Quality Index CLI](#air-quality-index-cli)
-  - [Installation](#installation)
-  - [Contents](#contents)
-  - [Usage](#usage)
-    - [Initialization](#initialization)
-    - [Search for air quality based on country or city name](#search-for-air-quality-based-on-country-or-city-name)
-    - [Save your city to config for quick view.](#save-your-city-to-config-for-quick-view)
-    - [Remove saved city from your config](#remove-saved-city-from-your-config)
-  - [Contributing](#contributing)
 ## Usage
 ### Initialization
 One time setup to initialize the CLI using API token.
