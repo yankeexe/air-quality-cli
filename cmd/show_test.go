@@ -11,8 +11,8 @@ import (
 
 func TestGetSearchQueries(t *testing.T) {
 	stationsConfig := map[string]utils.Stations{
-		"Bhaisipati, Ktm, Nepal":       {"Bhaisipati, KTM, Nepal", 10495, "kathmandu"},
-		"Us Embassy, Kathmandu, Nepal": {"US Embassy, Kathmandu, Nepal", 9468, "kathmandu"},
+		"Bhaisipati, Ktm, Nepal":       {StationName: "Bhaisipati, KTM, Nepal", UID: 10495, SearchQuery: "kathmandu"},
+		"Us Embassy, Kathmandu, Nepal": {StationName: "US Embassy, Kathmandu, Nepal", UID: 9468, SearchQuery: "kathmandu"},
 	}
 
 	config := utils.Config{ApiKey: "abcdef", Stations: stationsConfig}
