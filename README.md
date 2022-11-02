@@ -52,7 +52,7 @@ $ source ~/.bashrc
 $ echo "alias air='docker run --rm -it -v ${HOME}/.air:/home/cli/.air ghcr.io/yankeexe/air-quality-cli:latest'">> ~/.zshrc
 $ source ~/.zshrc
 
-# Use alias to invoke timezones-cli
+# Use alias to invoke air-quality-cli
 $ air search Singapore
 ```
 
